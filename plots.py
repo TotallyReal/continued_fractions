@@ -4,8 +4,10 @@ import matplotlib.pyplot as plt
 import scipy.stats as stats
 
 import math
+import zaremba
 from zaremba import \
-    count_zaremba_for, all_true, count_zaremba_up_to, NumFilter, is_prime, all_lengths, find_zaremba_up_to
+    count_zaremba_for, all_true, count_zaremba_up_to, NumFilter, is_prime, small_numerator, \
+    all_lengths, find_zaremba_up_to
 
 
 def plot_zaremba_count_up_to(max_denominator: int, bound: int, num_filter: NumFilter = all_true):
@@ -17,6 +19,9 @@ def plot_zaremba_count_up_to(max_denominator: int, bound: int, num_filter: NumFi
     denominators = range(1, max_denominator)
 
     plt.scatter(denominators, np.power(counters, 1.5), label=f'zaremba count({bound})', color='blue')
+    plt.xlabel ('denominators')
+    plt.ylabel (f'# {bound}-Zaremba numerators')
+    # plt.scatter(denominators, counters, label=f'zaremba count({bound})', color='blue')
     plt.show()
 
 
@@ -69,10 +74,12 @@ def plot_zaremba_rationals_up_to(max_denominator: int, bound: int):
     all_points = sum([
         [(i, j) for j in range(1, i) if zaremba_rationals[i][j]]
         for i in range(1, max_denominator)], [])
-    prime_points = [(i, j) for i, j in all_points if is_prime(j)]
+    prime_points = [(i, j) for i, j in all_points if zaremba.is_prime(j, i)]
 
-    plt.scatter([x for x, _ in all_points], [y for _, y in all_points], color='green', marker='.')
-    plt.scatter([x for x, _ in prime_points], [y for _, y in prime_points], color='blue', marker='.')
+    plt.scatter([x for x, _ in all_points], [y/x for x, y in all_points], color='green', marker='.')
+    plt.scatter([x for x, _ in prime_points], [y/x for x, y in prime_points], color='blue', marker='.')
+    plt.xlabel('denominators')
+    plt.ylabel(f'{bound}-Zaremba numerators')
     plt.show()
 
 

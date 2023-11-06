@@ -6,7 +6,7 @@ import scipy.stats as stats
 import math
 import zaremba
 from zaremba import \
-    count_zaremba_for, all_true, count_zaremba_up_to, NumFilter, is_prime, small_numerator, \
+    count_zaremba_for, all_true, count_zaremba_up_to, NumFilter, is_prime, \
     all_lengths, find_zaremba_up_to
 
 
@@ -74,7 +74,7 @@ def plot_zaremba_rationals_up_to(max_denominator: int, bound: int):
     all_points = sum([
         [(i, j) for j in range(1, i) if zaremba_rationals[i][j]]
         for i in range(1, max_denominator)], [])
-    prime_points = [(i, j) for i, j in all_points if zaremba.is_prime(j, i)]
+    prime_points = [(i, j) for i, j in all_points if zaremba.is_prime(j)]
 
     plt.scatter([x for x, _ in all_points], [y/x for x, y in all_points], color='green', marker='.')
     plt.scatter([x for x, _ in prime_points], [y/x for x, y in prime_points], color='blue', marker='.')

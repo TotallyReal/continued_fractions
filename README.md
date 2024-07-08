@@ -35,3 +35,13 @@ This conjecture is not yet proven, however there are partial results. In particu
 # The code
 
 The code here contains some simple methods to study this phenomena (which came up in one of the research problems I worked on). You can use it directly using the google colab document [here](https://colab.research.google.com/drive/1TVvUvjRyrIaBGCmS4ss5wV8abFo39PvD#scrollTo=362pOsGrjWEu).
+
+You can for example use it to generate graph as the one below, which counts the number of Zaremba rationals for all denominators up to 5000 with prime numerators:
+
+![5 Zaremba](Zaremba_5.png)
+
+The $y$ value here is $\frac{\log(\text{numerators count})}{\log(\text{denominator})}$, so the fact that it approaches $\frac{1}{2}$ means that $\text{numerators count} \sim \sqrt{\text{denominator}}$
+
+# Extra:
+
+Just to help, if you need to write LaTeX formulas for continued fractions, and you hate keeping track of all the parentheses, you can use this [google colab notebook](https://colab.research.google.com/drive/1nQy1q_-6ik0ylvbXvW2jRzZkaLhLzMG5#scrollTo=A7Wphrth42aW).

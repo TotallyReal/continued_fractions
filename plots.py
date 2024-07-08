@@ -1,6 +1,7 @@
 from typing import Generator
 import numpy as np
 import matplotlib.pyplot as plt
+import scipy
 import scipy.stats as stats
 import random
 from scipy.optimize import curve_fit
@@ -21,36 +22,21 @@ def plot_zaremba_count_up_to(max_denominator: int, bound: int, num_filter: NumFi
     filter (e.g. all numerators, prime numerators, etc.).
     """
     counters = np.array(count_zaremba_up_to(max_denominator, bound, num_filter))
-
     denominators = range(1, max_denominator)
+
     xx = denominators[1:]
     yy = np.log(counters[1:])/np.log(xx)
 
-    # for c in range(1, 200):
-    #     print(f'{xx[c]}: counter={counters[c+1]}, n({c})={yy[c]}')
-
-    count_value = 5
-    # xx = [x for x,b in zip(xx, counters[1:] == 5) if b]
-    # yy = [y for y,b in zip(yy, counters[1:] == 5) if b]
-    # popt, _ = curve_fit(objective, xx, yy)
-    # print(popt)
-    # y_line = objective(xx, *popt)
-
-    # plt.scatter(np.log(xx), yy, label=f'zaremba count({bound})', color='blue', s=1)
-    # plt.plot(xx, y_line, '--', color='red')
     plt.figure()
     plt.xlabel ('denominators')
     plt.ylabel (f'log(#{bound}-Zaremba)/log(denominator)')
     plt.scatter(xx, yy, label=f'zaremba count({bound})', color='green', s=0.1)
-    plt.figure()
-    plt.xlabel ('denominators')
-    plt.ylabel (f'# {bound}-Zaremba numerators')
-    plt.scatter(denominators, counters, label=f'zaremba count({bound})', color='green', s=0.1)
+
     plt.show()
 
 
 # # Example:
-plot_zaremba_count_up_to(50000, 5)#0.775
+# plot_zaremba_count_up_to(50000, 5)
 # plot_zaremba_count_up_to(10000, 6, zaremba.is_prime)
 exit(0)
 
@@ -111,7 +97,6 @@ def plot_zaremba_rationals_up_to(max_denominator: int, bound: int):
     plt.xlabel('denominators')
     plt.ylabel(f'{bound}-Zaremba numerators')
     plt.show()
-
 
 # plot_zaremba_rationals_up_to(300, 6)
 

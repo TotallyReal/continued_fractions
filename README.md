@@ -1,4 +1,4 @@
-# A (very) short introcution to Continued fraction 
+# A (very) short introcution to Continued fractions
 
 We usually use the decimal expansion to represent real numbers, though this is not the only representation method. For example, in most digital programming, we usually eventually use binary expansion (or maybe hexadecimal expansion).
 

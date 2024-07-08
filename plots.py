@@ -2,32 +2,57 @@ from typing import Generator
 import numpy as np
 import matplotlib.pyplot as plt
 import scipy.stats as stats
+import random
+from scipy.optimize import curve_fit
 
 import math
 import zaremba
 from zaremba import \
     count_zaremba_for, all_true, count_zaremba_up_to, NumFilter, is_prime, \
-    all_lengths, find_zaremba_up_to
+    all_lengths, find_zaremba_up_to, timed_function
 
+def objective(x, a, b, c):
+    return a / np.log(x) + b
 
+@timed_function
 def plot_zaremba_count_up_to(max_denominator: int, bound: int, num_filter: NumFilter = all_true):
     """
     For all denominators up to max_denominator, compute how many Zaremba rationals each one has, satisfying the given
     filter (e.g. all numerators, prime numerators, etc.).
     """
-    counters = count_zaremba_up_to(max_denominator, bound, num_filter)
-    denominators = range(1, max_denominator)
+    counters = np.array(count_zaremba_up_to(max_denominator, bound, num_filter))
 
-    plt.scatter(denominators, np.power(counters, 1.5), label=f'zaremba count({bound})', color='blue')
+    denominators = range(1, max_denominator)
+    xx = denominators[1:]
+    yy = np.log(counters[1:])/np.log(xx)
+
+    # for c in range(1, 200):
+    #     print(f'{xx[c]}: counter={counters[c+1]}, n({c})={yy[c]}')
+
+    count_value = 5
+    # xx = [x for x,b in zip(xx, counters[1:] == 5) if b]
+    # yy = [y for y,b in zip(yy, counters[1:] == 5) if b]
+    # popt, _ = curve_fit(objective, xx, yy)
+    # print(popt)
+    # y_line = objective(xx, *popt)
+
+    # plt.scatter(np.log(xx), yy, label=f'zaremba count({bound})', color='blue', s=1)
+    # plt.plot(xx, y_line, '--', color='red')
+    plt.figure()
+    plt.xlabel ('denominators')
+    plt.ylabel (f'log(#{bound}-Zaremba)/log(denominator)')
+    plt.scatter(xx, yy, label=f'zaremba count({bound})', color='green', s=0.1)
+    plt.figure()
     plt.xlabel ('denominators')
     plt.ylabel (f'# {bound}-Zaremba numerators')
-    # plt.scatter(denominators, counters, label=f'zaremba count({bound})', color='blue')
+    plt.scatter(denominators, counters, label=f'zaremba count({bound})', color='green', s=0.1)
     plt.show()
 
 
 # # Example:
-# plot_zaremba_count_up_to(10000, 6)
+plot_zaremba_count_up_to(50000, 5)#0.775
 # plot_zaremba_count_up_to(10000, 6, zaremba.is_prime)
+exit(0)
 
 def plot_zaremba_count(
         denominators: Generator[int, None, None], bound: int, num_filter: NumFilter = all_true):
@@ -36,8 +61,14 @@ def plot_zaremba_count(
     filter (e.g. all numerators, prime numerators, etc.).
     """
     counters = count_zaremba_for(denominators, bound, num_filter)
+    xx = denominators
+    yy = np.log(counters)/np.log(xx)
 
-    plt.scatter(denominators, np.power(counters, 1.5), label=f'zaremba count({bound})', color='blue')
+    plt.scatter(xx, yy, label=f'zaremba count({bound})', color='blue', s=1)
+    plt.xlabel ('denominators')
+    plt.ylabel (f'log(#{bound}-Zaremba)/log(denominator)')
+
+    # plt.scatter(denominators, np.power(counters, 1.5), label=f'zaremba count({bound})', color='blue')
     plt.show()
 
 
@@ -45,7 +76,6 @@ def plot_zaremba_count(
 # # 100 random numbers in [1,100000]. Note that right now primes are computed only up to 100000
 # import random
 # denominators = [random.randint(1,100000) for _ in range(100)]
-# plot_zaremba_count(denominators, 6)
 # plot_zaremba_count(denominators, 6, zaremba.is_prime)
 
 

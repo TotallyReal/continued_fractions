@@ -9,7 +9,7 @@ import primes
 
 NumFilter = Callable[[int], bool]
 
-
+# Use to see which function runs the fastest
 def timed_function(func):
     @wraps(func)
     def wrapper(*arg, **kwarg):
@@ -75,7 +75,6 @@ def cf(numerator: int, denominator: int) -> Generator[int, None, None]:
 
 # --------------------------- single continued fraction bounded ---------------------------
 
-
 def cf_is_bounded(numerator: int, denominator: int, bound: int) -> bool:
     """
     Returns True if numerator and denominator are coprime and the coefficients in the continued fraction
@@ -85,12 +84,28 @@ def cf_is_bounded(numerator: int, denominator: int, bound: int) -> bool:
     for c in cf(numerator, denominator):
         if c > bound:
             return False
-    return c > 0  # if c<=0, then (numerator, denominator) > 1 aare not coprime
+    return c > 0  # if c<=0, then (numerator, denominator) > 1 are not coprime
+
+
+"""
+--------------------------- Zaremba count ---------------------------
+
+The following are all versions of counting rational which have bounded continued fractions (for a given bound), 
+which I call 'Zaremba count' after Zaremba's conjecture.
+
+In each of them we have:
+    1) The bound 
+    2) The set of denominators m, for which we consider rational n/m with 0<=n<m (namely in [0,1) ).
+    3) An extra filter on the numbers (e.g. n is prime).
+"""
 
 
 @timed_function
 def count_zaremba_for(
         denominators: Generator[int, None, None], bound: int, num_filter: NumFilter = all_true):
+    """
+    Counts Zaremba rational, with the simple bound check function cf_is_bounded.
+    """
     return [
         sum([cf_is_bounded(numerator=numerator, denominator=denominator, bound=bound)
              for numerator in range(0, denominator) if num_filter(numerator)])
@@ -98,11 +113,22 @@ def count_zaremba_for(
     ]
 
 
-# --------------------------- range continued fraction bounded ---------------------------
-# Counting Zaremba rationals for denominators in a range [1, max_denominator]
-# By saving all the Zaremba rational, while it cost more in space, it can run faster.
-# Tried all sort of functions, to find one which is fast. Can probably get even better than the ones here.
+"""
+--------------------------- range Zaremba count ---------------------------
 
+Counting Zaremba rationals for denominators in a range [1, max_denominator]
+By saving all the Zaremba rational, while it costs more in space, it can run faster.
+Tried all sort of functions, to find one which is fast. Can probably get even better than the ones here.
+
+The main idea here is that for a rational number j/i with 0<j<i, we can write i = q*j + r for division 
+with remainder. We then have that 
+
+j / i = j / (q * j + r) = 1 / (q + (r/j))
+
+This means that j/i has continued fraction bounded by C iff q<=C and r/j has continued fraction bounded
+by C. This suggests using the Zaremba count for simpler rationals (smaller numerator\denominator) to 
+compute the Zaremba count for more complex rationals. 
+"""
 
 @timed_function
 def find_zaremba_up_to1(max_denominator: int, bound: int) -> Set:
@@ -141,7 +167,6 @@ def find_zaremba_up_to3(max_denominator: int, bound: int) -> Set:
         quotients, remainders = np.divmod(numerators, denominators)
         for q, r, j in zip(quotients, remainders, denominators):
             if q <= bound and (r, j) in bounded_rcf:
-                # print(f'adding ({j}, {i})')
                 bounded_rcf.add((j, i))
     return bounded_rcf
 
@@ -222,6 +247,7 @@ def dict_int_bool_to_standard(d: Dict[int, List[int]]) -> Set:
     return s
 
 
+# Compare the different counting techniques to validate them (at least for simpler small rationals).
 def compare_zaremba_counters(max_denominator: int, bound: int):
     s1 = find_zaremba_up_to1(max_denominator=max_denominator, bound=bound)
     s2 = find_zaremba_up_to2(max_denominator=max_denominator, bound=bound)
@@ -248,7 +274,7 @@ def compare_zaremba_counters(max_denominator: int, bound: int):
 # usually the 7 and 8 versions of find_zaremba_up_to are the fastest, with 8 usually the best
 find_zaremba_up_to = find_zaremba_up_to8
 
-
+@timed_function
 def count_zaremba_up_to(max_denominator: int, bound: int, num_filter: NumFilter = all_true):
     zaremba_rationals = find_zaremba_up_to(max_denominator=max_denominator, bound=bound)
     return [
@@ -276,12 +302,16 @@ def cf_length2(numerator: int, denominator: int) -> int:
     c = 0
     for c in cf(numerator, denominator):
         counter += 1
-    if c == 0:  # (numerator, denominator)>1
-        return 0
+    if c < 0:  # gcd(numerator, denominator)>1
+        return -1
     return counter
 
 
 @timed_function
 def all_lengths(denominator: int, num_filter: NumFilter = all_true) -> List[int]:
+    """
+    Given the denominator m, run over all n/m in [0,1) satisfying the filter, and returns
+    a list of their continued fractions lengths.
+    """
     lengths = [cf_length(numerator, denominator) for numerator in range(1, denominator) if num_filter(numerator)]
     return [length for length in lengths if length != -1]

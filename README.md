@@ -45,3 +45,12 @@ The $y$ value here is $\frac{\log(\text{numerators count})}{\log(\text{denominat
 # Extra:
 
 Just to help, if you need to write LaTeX formulas for continued fractions, and you hate keeping track of all the parentheses, you can use this [google colab notebook](https://colab.research.google.com/drive/1nQy1q_-6ik0ylvbXvW2jRzZkaLhLzMG5#scrollTo=A7Wphrth42aW).
+
+
+---
+
+**My homepage**: [https://prove-me-wrong.com/](https://prove-me-wrong.com/)
+
+**Contact**:	 [totallyRealField@gmail.com](mailto:totallyRealField@gmail.com)
+
+**Ofir David**
